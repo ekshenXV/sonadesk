@@ -1,0 +1,10 @@
+# Portable release and local backups
+/Mic Effects/
+/*.zip
+/*.rar
+/*.7z
+
+# Build output and downloaded dependencies
+/Source/bin/
+/Source/obj/
+/Source/Desktop/node_modules/

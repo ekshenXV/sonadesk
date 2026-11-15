@@ -1,0 +1,4 @@
+LIBRARY MicEffects.Apo
+EXPORTS
+    DllGetClassObject PRIVATE
+    DllCanUnloadNow PRIVATE

@@ -29,7 +29,7 @@ async function main() {
   cpSync(path.join(__dirname, 'fonts'), path.join(ui, 'fonts'), { recursive: true });
   for (const pkg of ['react', 'react-dom', 'scheduler'])
     copyFileSync(path.join(stage, 'node_modules', pkg, 'LICENSE'), path.join(resources, pkg + '-LICENSE.txt'));
-  writeFileSync(path.join(app, 'package.json'), JSON.stringify({ name: 'mic-effects', productName: 'Mic Effects', version, main: 'main.cjs' }));
+  writeFileSync(path.join(app, 'package.json'), JSON.stringify({ name: 'sonadesk', productName: 'SonaDesk', version, main: 'main.cjs' }));
   await options.build({
     entryPoints: [path.join(__dirname, 'app.jsx')],
     outfile: path.join(ui, 'app.js'),
@@ -37,10 +37,10 @@ async function main() {
     bundle: true, minify: true, target: 'chrome130', legalComments: 'eof',
     define: { 'process.env.NODE_ENV': '"production"' }
   });
-  copyFileSync(path.join(native, 'MicEffects.Audio.exe'), path.join(resources, 'MicEffects.Audio.exe'));
+  copyFileSync(path.join(native, 'SonaDesk.Audio.exe'), path.join(resources, 'SonaDesk.Audio.exe'));
   copyFileSync(path.join(native, 'MicEffects.Vst3.dll'), path.join(resources, 'MicEffects.Vst3.dll'));
   copyFileSync(path.join(__dirname, '..', 'Vst3', 'LICENSE.txt'), path.join(resources, 'VST3-SDK-LICENSE.txt'));
-  const executable = path.join(output, 'MicEffects.exe');
+  const executable = path.join(output, 'SonaDesk.exe');
   copyFileSync(path.join(runtime, 'electron.exe'), executable);
   console.log(executable);
 }

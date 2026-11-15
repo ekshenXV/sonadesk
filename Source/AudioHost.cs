@@ -6,10 +6,12 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
+using Microsoft.Win32;
 using NAudio.CoreAudioApi;
 
 namespace MicEffects
@@ -124,7 +126,8 @@ namespace MicEffects
                 {
                     case "init":
                         if (!initialized) { await Initialize(command.Enabled); initialized = true; }
-                        break;
+                        Write(new { id, state = Snapshot(), data = LegacyStartupCommand() });
+                        return;
                     case "select":
                         Endpoint device = inputs.FirstOrDefault(value => value.Id.ToString("D") == command.Value);
                         if (device == null) throw new InvalidOperationException("Микрофон недоступен.");
@@ -251,6 +254,19 @@ namespace MicEffects
             public EqualizerBand[] Bands { get; set; }
         }
 
+        private static string LegacyStartupCommand()
+        {
+            try
+            {
+                using (var run = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run"))
+                    return run?.GetValue("Mic Effects", null, RegistryValueOptions.DoNotExpandEnvironmentNames) as string;
+            }
+            catch (Exception error) when (error is IOException || error is UnauthorizedAccessException || error is SecurityException)
+            {
+                return null;
+            }
+        }
+
         private async Task Initialize(bool startedAtLogin)
         {
             inputs = Endpoint.List();
@@ -307,7 +323,7 @@ namespace MicEffects
             if (preservePreset)
                 SetStatus("Пресет повреждён. При сохранении исходный файл останется в копии.", "error");
             if (failedToLoadPreset)
-                SetStatus("Нет доступа к пресету. Проверь файл и перезапусти Mic Effects.", "error");
+                SetStatus("Нет доступа к пресету. Проверь файл и перезапусти SonaDesk.", "error");
         }
 
         private static void SetDefaultInput(Endpoint device)
@@ -361,7 +377,7 @@ namespace MicEffects
                 {
                     if (setup == null)
                     {
-                        SetStatus(setupError ?? "Перезапусти Mic Effects и подтверди запрос Windows, чтобы подключить этот вход.", "error");
+                        SetStatus(setupError ?? "Перезапусти SonaDesk и подтверди запрос Windows, чтобы подключить этот вход.", "error");
                         OpenCapture(selected, useEffects: false);
                         return;
                     }

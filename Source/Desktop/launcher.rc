@@ -1,1 +1,27 @@
 1 ICON "icon.ico"
+
+#define STRINGIFY_VALUE(value) #value
+#define STRINGIFY(value) STRINGIFY_VALUE(value)
+
+1 VERSIONINFO
+FILEVERSION SONADESK_VERSION
+PRODUCTVERSION SONADESK_VERSION
+FILEOS 0x00040004
+FILETYPE 0x00000001
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "FileDescription", "SonaDesk"
+            VALUE "FileVersion", STRINGIFY(SONADESK_VERSION_TEXT)
+            VALUE "OriginalFilename", "SonaDesk.exe"
+            VALUE "ProductName", "SonaDesk"
+            VALUE "ProductVersion", STRINGIFY(SONADESK_VERSION_TEXT)
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0409, 1200
+    END
+END

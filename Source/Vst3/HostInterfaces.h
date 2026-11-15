@@ -55,7 +55,7 @@ class HostApplication final : public HostObject<IHostApplication> {
     const char* interfaceId() const override { return IHostApplication_iid; }
 public:
     tresult PLUGIN_API getName(String128 name) override {
-        constexpr char16 text[] = u"Mic Effects";
+        constexpr char16 text[] = u"SonaDesk";
         std::copy(text, text + sizeof(text) / sizeof(*text), name);
         return kResultOk;
     }

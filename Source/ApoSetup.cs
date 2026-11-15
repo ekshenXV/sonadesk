@@ -605,7 +605,7 @@ namespace MicEffects
         private static void Register(string path)
         {
             using (var registration = Registry.LocalMachine.CreateSubKey(@"SOFTWARE\Classes\CLSID\" + ApoClass))
-                registration.SetValue(string.Empty, "Mic Effects Capture");
+                registration.SetValue(string.Empty, "SonaDesk Capture");
             using (var server = Registry.LocalMachine.CreateSubKey(RegistryClass))
             {
                 server.SetValue(string.Empty, path);
@@ -613,8 +613,8 @@ namespace MicEffects
             }
             using (var apo = Registry.LocalMachine.CreateSubKey(AudioEngine + ApoClass))
             {
-                apo.SetValue("FriendlyName", "Mic Effects");
-                apo.SetValue("Copyright", "Mic Effects");
+                apo.SetValue("FriendlyName", "SonaDesk");
+                apo.SetValue("Copyright", "SonaDesk");
                 apo.SetValue("MajorVersion", 1);
                 apo.SetValue("MinorVersion", 0);
                 apo.SetValue("Flags", 15);

@@ -13,12 +13,12 @@ namespace MicEffects
 {
     internal static class PortableUpdate
     {
-        private const string Launcher = "MicEffects.exe";
+        private const string Launcher = "SonaDesk.exe";
         private const string Runtime = "app";
         private const string Prepared = "prepared";
         private const string Previous = "previous";
-        private const string Archive = "MicEffects.zip";
-        private const string ZipRoot = "Mic Effects/";
+        private const string Archive = "SonaDesk.zip";
+        private const string ZipRoot = "SonaDesk/";
         private const long ExpandedLimit = 3L * 1024 * 1024 * 1024;
         private static readonly char[] InvalidNameCharacters = Path.GetInvalidFileNameChars();
         private static readonly Regex ReservedName = new Regex(@"^(CON|PRN|AUX|NUL|COM[1-9¹²³]|LPT[1-9¹²³])(?:\.|$)", RegexOptions.IgnoreCase);
@@ -106,9 +106,9 @@ namespace MicEffects
             string runtime = Path.Combine(root, Runtime);
             if (!File.Exists(launcher) || !Directory.Exists(runtime) || IsLink(launcher) || IsLink(runtime) ||
                 !File.Exists(Path.Combine(runtime, Launcher)) ||
-                !File.Exists(Path.Combine(runtime, "resources", "MicEffects.Audio.exe")) ||
+                !File.Exists(Path.Combine(runtime, "resources", "SonaDesk.Audio.exe")) ||
                 !File.Exists(Path.Combine(runtime, "resources", "app", "main.cjs")))
-                throw new InvalidDataException("Incomplete Mic Effects installation.");
+                throw new InvalidDataException("Incomplete SonaDesk installation.");
         }
 
         private static int Install(string stage, int pid)
@@ -157,7 +157,7 @@ namespace MicEffects
                 {
                     bool russian = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "ru";
                     MessageBox.Show((russian ? "Не удалось завершить обновление. Файлы восстановления сохранены в папке " :
-                        "The update could not finish. Recovery files are in ") + stage, "Mic Effects", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        "The update could not finish. Recovery files are in ") + stage, "SonaDesk", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 return 1;
             }
@@ -170,7 +170,7 @@ namespace MicEffects
             {
                 WorkingDirectory = root, UseShellExecute = false
             }))
-                if (process == null) throw new IOException("Could not restart Mic Effects.");
+                if (process == null) throw new IOException("Could not restart SonaDesk.");
         }
 
         private static void Retry(Action action)

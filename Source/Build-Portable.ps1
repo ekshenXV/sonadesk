@@ -7,11 +7,11 @@ param(
 
 $ErrorActionPreference = 'Stop'
 New-Item -ItemType Directory -Path $OutputDirectory -Force | Out-Null
-$output = Join-Path (Resolve-Path -LiteralPath $OutputDirectory).Path 'MicEffects.zip'
+$output = Join-Path (Resolve-Path -LiteralPath $OutputDirectory).Path 'SonaDesk.zip'
 $pending = "$output.$([Guid]::NewGuid()).pending"
 $stageRoot = Join-Path $PSScriptRoot 'obj\desktop'
 $stage = Join-Path $stageRoot ([Guid]::NewGuid().ToString('N'))
-$application = Join-Path $stage 'Mic Effects'
+$application = Join-Path $stage 'SonaDesk'
 New-Item -ItemType Directory -Path $application -Force | Out-Null
 try {
     & (Join-Path $PSScriptRoot 'Build-Desktop.ps1') -Zig $Zig -SdkHeaders $SdkHeaders -OutputDirectory $application

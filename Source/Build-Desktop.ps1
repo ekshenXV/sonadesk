@@ -2,7 +2,7 @@
 param(
     [string]$Zig,
     [string]$SdkHeaders,
-    [string]$OutputDirectory = (Join-Path (Split-Path $PSScriptRoot -Parent) 'Mic Effects')
+    [string]$OutputDirectory = (Join-Path (Split-Path $PSScriptRoot -Parent) 'SonaDesk')
 )
 
 $ErrorActionPreference = 'Stop'
@@ -37,9 +37,14 @@ Copy-Item -LiteralPath (Join-Path (Split-Path $PSScriptRoot -Parent) 'NAudio-LIC
 if (!$Zig) { $Zig = Join-Path $PSScriptRoot 'obj\toolchain\zig-x86_64-windows-0.15.2\zig.exe' }
 $Zig = (Resolve-Path -LiteralPath $Zig).Path
 $resource = Join-Path $native 'launcher.res'
-& $Zig rc /c65001 "/I$desktop" "/fo$resource" (Join-Path $desktop 'launcher.rc')
+$version = [version](Get-Content -LiteralPath (Join-Path $desktop 'package.json') -Raw | ConvertFrom-Json).version
+$fileVersion = @($version.Major, $version.Minor, $version.Build, 0) -join ','
+& $Zig rc /c65001 "/dSONADESK_VERSION=$fileVersion" "/dSONADESK_VERSION_TEXT=$version" `
+    "/I$desktop" "/fo$resource" (Join-Path $desktop 'launcher.rc')
 if ($LASTEXITCODE -ne 0) { throw 'Launcher icon compilation failed.' }
-$launcher = Join-Path $OutputDirectory 'MicEffects.exe'
-& $Zig cc -target x86_64-windows-gnu -municode '-Wl,--subsystem,windows' -Oz -s (Join-Path $desktop 'launcher.c') $resource -luser32 -o $launcher
+$launcher = Join-Path $OutputDirectory 'SonaDesk.exe'
+$builtLauncher = Join-Path $native 'SonaDesk.exe'
+& $Zig cc -target x86_64-windows-gnu -municode '-Wl,--subsystem,windows' -Oz -s (Join-Path $desktop 'launcher.c') $resource -luser32 -o $builtLauncher
 if ($LASTEXITCODE -ne 0) { throw 'Launcher build failed.' }
+Copy-Item -LiteralPath $builtLauncher -Destination $launcher -Force
 Write-Output $launcher

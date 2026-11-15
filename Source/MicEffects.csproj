@@ -6,8 +6,8 @@
     <PlatformTarget>x64</PlatformTarget>
     <LangVersion>latest</LangVersion>
     <Version>0.7.2</Version>
-    <AssemblyName>MicEffects.Audio</AssemblyName>
-    <Product>Mic Effects</Product>
+    <AssemblyName>SonaDesk.Audio</AssemblyName>
+    <Product>SonaDesk</Product>
     <NAudioVersion>2.2.1</NAudioVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <ApoBinary Condition="'$(ApoBinary)' == ''">$(MSBuildProjectDirectory)/obj/native/MicEffects.Apo.dll</ApoBinary>

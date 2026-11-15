@@ -298,7 +298,7 @@ function App() {
 
   return <>
     <header className="titlebar">
-      <div className="brand"><Mark/><span>Mic Effects</span></div>
+      <div className="brand"><Mark/><span>SonaDesk</span></div>
       <div className="appearance-controls">
         <Segments label={t.theme} value={theme} onChange={value => changeAppearance('theme', value)} options={[
           { value: 'light', label: t.light, content: sun }, { value: 'dark', label: t.dark, content: moon }

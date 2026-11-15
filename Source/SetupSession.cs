@@ -80,7 +80,7 @@ namespace MicEffects
             await pipe.WriteAsync(request, 0, request.Length).ConfigureAwait(false);
             byte[] result = new byte[1];
             if (await pipe.ReadAsync(result, 0, 1).ConfigureAwait(false) != 1)
-                throw new IOException("Помощник подключения завершился. Перезапусти Mic Effects.");
+                throw new IOException("Помощник подключения завершился. Перезапусти SonaDesk.");
             return result[0];
         }
 

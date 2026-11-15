@@ -14,19 +14,19 @@ static int launch_error(BOOL missing_files)
     BOOL russian = PRIMARYLANGID(GetUserDefaultUILanguage()) == LANG_RUSSIAN;
     const wchar_t *message;
     if (missing_files) {
-        message = russian ? L"Распакуй весь ZIP-архив и запусти MicEffects.exe."
-                          : L"Extract the entire ZIP archive, then run MicEffects.exe.";
+        message = russian ? L"Распакуй весь ZIP-архив и запусти SonaDesk.exe."
+                          : L"Extract the entire ZIP archive, then run SonaDesk.exe.";
     } else {
-        message = russian ? L"Не удалось запустить Mic Effects."
-                          : L"Could not start Mic Effects.";
+        message = russian ? L"Не удалось запустить SonaDesk."
+                          : L"Could not start SonaDesk.";
     }
-    MessageBoxW(NULL, message, L"Mic Effects", MB_OK | MB_ICONERROR);
+    MessageBoxW(NULL, message, L"SonaDesk", MB_OK | MB_ICONERROR);
     return 1;
 }
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE previous, PWSTR arguments, int show)
 {
-    const wchar_t suffix[] = L"app\\MicEffects.exe";
+    const wchar_t suffix[] = L"app\\SonaDesk.exe";
     DWORD length = GetModuleFileNameW(NULL, launcher, ARRAYSIZE(launcher));
     if (length == 0 || length >= ARRAYSIZE(launcher)) return launch_error(FALSE);
 

@@ -69,5 +69,5 @@ if ($LASTEXITCODE -ne 0) { throw 'VST3 host build failed.' }
 dotnet build (Join-Path $PSScriptRoot 'MicEffects.csproj') -c Release "-p:ApoBinary=$dll"
 if ($LASTEXITCODE -ne 0) { throw 'Application build failed.' }
 New-Item -ItemType Directory -Path $OutputDirectory -Force | Out-Null
-Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'bin\Release\net48\MicEffects.Audio.exe') -Destination $OutputDirectory -Force
+Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'bin\Release\net48\SonaDesk.Audio.exe') -Destination $OutputDirectory -Force
 Copy-Item -LiteralPath $vst3Host -Destination $OutputDirectory -Force

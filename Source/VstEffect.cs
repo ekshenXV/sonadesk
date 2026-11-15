@@ -325,7 +325,7 @@ namespace MicEffects
                 case HostQuery.Vendor:
                 case HostQuery.Product:
                     if (pointer == IntPtr.Zero) return IntPtr.Zero;
-                    byte[] name = Encoding.ASCII.GetBytes("Mic Effects\0");
+                    byte[] name = Encoding.ASCII.GetBytes("SonaDesk\0");
                     Marshal.Copy(name, 0, pointer, name.Length);
                     return new IntPtr(1);
                 case HostQuery.VendorVersion: return new IntPtr(100);

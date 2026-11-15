@@ -209,7 +209,7 @@ public:
         *registration = APO_REG_PROPERTIES{};
         registration->clsid = classId;
         registration->Flags = flags;
-        wcscpy(registration->szFriendlyName, L"Mic Effects");
+        wcscpy(registration->szFriendlyName, L"SonaDesk");
         registration->u32MajorVersion = 1;
         registration->u32MinInputConnections = registration->u32MaxInputConnections = 1;
         registration->u32MinOutputConnections = registration->u32MaxOutputConnections = 1;

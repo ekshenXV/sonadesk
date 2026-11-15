@@ -6,8 +6,8 @@ const path = require('node:path');
 const { Readable, Transform } = require('node:stream');
 const { pipeline } = require('node:stream/promises');
 
-const archiveName = 'MicEffects.zip';
-const launcherName = 'MicEffects.exe';
+const archiveName = 'SonaDesk.zip';
+const launcherName = 'SonaDesk.exe';
 const stagePrefix = '.mic-effects-update-';
 const stageNamePattern = /^\.mic-effects-update-[0-9a-f]{32}$/;
 const releaseTag = /^v(0|[1-9]\d{0,7})\.(0|[1-9]\d{0,7})\.(0|[1-9]\d{0,7})$/;
@@ -109,7 +109,7 @@ function createUpdater({ repository, version, launcher, audioBinary, fetch, noti
       await downloadArchive(fetch, url, release, path.join(stage, archiveName),
         AbortSignal.any([signal, AbortSignal.timeout(30 * 60 * 1000)]), progress => publish({ ...available, phase: 'downloading', progress }));
       publish({ ...available, phase: 'preparing' });
-      const helper = path.join(stage, 'MicEffects.Update.exe');
+      const helper = path.join(stage, 'SonaDesk.Update.exe');
       await copyFile(audioBinary, helper);
       await prepare(helper, stage, release);
       signal.throwIfAborted();

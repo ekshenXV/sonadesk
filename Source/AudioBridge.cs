@@ -43,7 +43,7 @@ namespace MicEffects
         internal AudioBridge(string mappingName, EffectChain chain)
         {
             this.chain = chain;
-            thread = new Thread(() => Work(mappingName)) { IsBackground = true, Name = "Mic Effects audio", Priority = ThreadPriority.AboveNormal };
+            thread = new Thread(() => Work(mappingName)) { IsBackground = true, Name = "SonaDesk audio", Priority = ThreadPriority.AboveNormal };
             thread.Start();
         }
 

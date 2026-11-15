@@ -1,6 +1,6 @@
 const { app, BrowserWindow, Menu, Tray, dialog, ipcMain, protocol, net, session, nativeTheme, screen } = require('electron');
 const { spawn } = require('node:child_process');
-const { renameSync, writeFileSync } = require('node:fs');
+const { mkdirSync, renameSync, writeFileSync } = require('node:fs');
 const { readFile, stat } = require('node:fs/promises');
 const { createInterface } = require('node:readline');
 const path = require('node:path');
@@ -18,7 +18,13 @@ const assets = new Set([
   'fonts/mono-latin.woff2', 'fonts/mono-cyrillic.woff2'
 ]);
 const portableExecutable = process.env.PORTABLE_EXECUTABLE_FILE;
-const loginItem = { path: portableExecutable || process.execPath, args: ['--autostart'], name: 'Mic Effects' };
+const loginItem = { path: portableExecutable || process.execPath, args: ['--autostart'], name: 'SonaDesk' };
+if (!app.commandLine.hasSwitch('user-data-dir')) {
+  // Keep the existing profile and single-instance lock across the rename.
+  const profile = path.join(app.getPath('appData'), 'Mic Effects');
+  mkdirSync(profile, { recursive: true });
+  app.setPath('userData', profile);
+}
 const appearancePath = path.join(app.getPath('userData'), 'appearance.json');
 const windowColors = { light: '#edf4fc', dark: '#121b28' };
 protocol.registerSchemesAsPrivileged([{ scheme: 'mic-effects', privileges: { standard: true, secure: true, supportFetchAPI: true } }]);
@@ -35,8 +41,8 @@ const pending = new Map();
 let ready;
 let startupError = null;
 const audioBinary = app.isPackaged
-  ? path.join(process.resourcesPath, 'MicEffects.Audio.exe')
-  : path.join(__dirname, 'MicEffects.Audio.exe');
+  ? path.join(process.resourcesPath, 'SonaDesk.Audio.exe')
+  : path.join(__dirname, 'SonaDesk.Audio.exe');
 const updater = createUpdater({ repository, version: app.getVersion(), launcher: portableExecutable, audioBinary,
   fetch: (url, options) => net.fetch(url, options), notify: state => sendToWindow('update-state', state), quit });
 
@@ -127,7 +133,11 @@ function startAudio() {
   host.on('error', () => stopped('audioLaunchFailed'));
   host.on('exit', code => stopped(code === 8 ? 'audioDuplicate' : 'audioStopped'));
   host.stdin.on('error', () => {});
-  ready = call('init', undefined, process.argv.includes('--autostart')).catch(error => {
+  ready = call('init', undefined, process.argv.includes('--autostart')).then(({ data }) => {
+    try { migrateLoginItem(data); }
+    catch (error) { console.warn('Could not migrate the Windows startup entry:', error.message); }
+    return current;
+  }).catch(error => {
     if (!current.offline) publish({ status: error.message, kind: 'error', offline: true });
     return current;
   });
@@ -138,6 +148,22 @@ function startsWithWindows() {
   return app.getLoginItemSettings(loginItem).launchItems.some(item =>
     item.name === loginItem.name && item.scope === 'user' && item.enabled &&
     path.normalize(item.path).toLowerCase() === path.normalize(loginItem.path).toLowerCase());
+}
+
+function migrateLoginItem(command) {
+  const match = /^(?:"([^"]+)"|([^"]+?))\s+--autostart\s*$/i.exec(command || '');
+  const previousPath = match?.[1] || match?.[2];
+  if (!previousPath || !path.isAbsolute(previousPath) || path.basename(previousPath).toLowerCase() !== 'miceffects.exe') return;
+
+  const previous = app.getLoginItemSettings({ path: previousPath, args: loginItem.args }).launchItems.find(item =>
+    item.name === 'Mic Effects' && item.scope === 'user');
+  if (!previous) return;
+
+  if (previous.enabled && !startsWithWindows()) {
+    app.setLoginItemSettings({ ...loginItem, openAtLogin: true });
+    if (!startsWithWindows()) return;
+  }
+  app.setLoginItemSettings({ name: previous.name, path: previous.path, openAtLogin: false });
 }
 
 function registerHandlers() {
@@ -172,9 +198,10 @@ function registerHandlers() {
   });
   command('enable-playback-enhancements', value => call('enable-playback-enhancements', id(value)));
   command('enable-enhancements', value => call('enable-enhancements', id(value)));
-  command('get-startup', () => ({ enabled: startsWithWindows() }));
-  command('set-startup', enabled => {
+  command('get-startup', async () => { await ready; return { enabled: startsWithWindows() }; });
+  command('set-startup', async enabled => {
     if (typeof enabled !== 'boolean') throw new Error('invalidStartup');
+    await ready;
     app.setLoginItemSettings({ ...loginItem, openAtLogin: enabled });
     const actual = startsWithWindows();
     if (actual !== enabled) return { enabled: actual, error: 'startupFailed' };
@@ -227,7 +254,7 @@ async function show() {
     reloadingWindow = true;
     try { await window.loadURL(page); }
     catch (error) {
-      if (!quitting) dialog.showErrorBox('Mic Effects', localizeMessage(error.message, appearance.language));
+      if (!quitting) dialog.showErrorBox('SonaDesk', localizeMessage(error.message, appearance.language));
       return;
     }
     finally { reloadingWindow = false; }
@@ -273,7 +300,7 @@ if (!app.requestSingleInstanceLock()) {
     const workArea = screen.getPrimaryDisplay().workAreaSize;
     const width = Math.min(930, workArea.width);
     window = new BrowserWindow({
-      title: 'Mic Effects', width, minWidth: width, maxWidth: width,
+      title: 'SonaDesk', width, minWidth: width, maxWidth: width,
       height: Math.min(680, workArea.height), minHeight: Math.min(470, workArea.height), maximizable: false,
       backgroundColor: windowColors[appearance.theme], frame: false, show: false, icon,
       webPreferences: { sandbox: true, contextIsolation: true, nodeIntegration: false, preload: path.join(__dirname, 'preload.cjs') }
@@ -288,7 +315,7 @@ if (!app.requestSingleInstanceLock()) {
     });
     window.on('session-end', quit);
     tray = new Tray(path.join(__dirname, 'tray.ico'));
-    tray.setToolTip('Mic Effects');
+    tray.setToolTip('SonaDesk');
     updateTrayMenu();
     tray.on('double-click', show);
     registerHandlers();
@@ -298,7 +325,7 @@ if (!app.requestSingleInstanceLock()) {
     await updater.finish(process.argv);
     void updater.check();
   }).catch(error => {
-    dialog.showErrorBox('Mic Effects', localizeMessage(error.message, appearance.language));
+    dialog.showErrorBox('SonaDesk', localizeMessage(error.message, appearance.language));
     quit();
   });
   app.on('before-quit', event => {

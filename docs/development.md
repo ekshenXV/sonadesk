@@ -23,4 +23,4 @@
 - Если Windows не загружает APO, приложение восстанавливает предыдущие настройки захвата и показывает ошибку. Модуль поставляется без цифровой подписи. Первое подключение APO к физическому устройству на чистой установке Windows ещё предстоит проверить.
 - Обмен звуком между процессами добавляет около 35 мс буферизации плюс задержку эффекта. Изоляция голоса сводит стереовход в моно и добавляет 60 мс при 48 кГц.
 
-Лицензии Electron, React, NAudio и интерфейсов VST3 приложены к программе. Изоляция голоса использует [DPDFNet](https://github.com/ceva-ip/DPDFNet) и [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) с [ONNX Runtime](https://github.com/microsoft/onnxruntime). Их файлы и лицензии находятся в `app/resources/voice-isolation`.
+Лицензии Electron, React, [NAudio](third-party/NAudio-LICENSE.txt) и интерфейсов VST3 приложены к программе. Изоляция голоса использует [DPDFNet](https://github.com/ceva-ip/DPDFNet) и [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) с [ONNX Runtime](https://github.com/microsoft/onnxruntime). Их файлы и лицензии находятся в `app/resources/voice-isolation`.

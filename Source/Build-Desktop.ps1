@@ -31,7 +31,7 @@ $runtime = Join-Path $OutputDirectory 'app'
 & node (Join-Path $desktop 'package-app.cjs') $stage $runtime $native
 if ($LASTEXITCODE -ne 0) { throw 'Desktop build failed.' }
 & (Join-Path $PSScriptRoot 'Build-VoiceIsolation.ps1') -OutputDirectory (Join-Path $runtime 'resources\voice-isolation')
-Copy-Item -LiteralPath (Join-Path (Split-Path $PSScriptRoot -Parent) 'NAudio-LICENSE.txt') `
+Copy-Item -LiteralPath (Join-Path (Split-Path $PSScriptRoot -Parent) 'docs\third-party\NAudio-LICENSE.txt') `
     -Destination (Join-Path $runtime 'resources') -Force
 
 if (!$Zig) { $Zig = Join-Path $PSScriptRoot 'obj\toolchain\zig-x86_64-windows-0.15.2\zig.exe' }

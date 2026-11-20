@@ -1,0 +1,33 @@
+#define STRINGIFY_VALUE(value) #value
+#define STRINGIFY(value) STRINGIFY_VALUE(value)
+
+#if SONADESK_COMPONENT == 1
+#define COMPONENT_FILE "MicEffects.Apo.dll"
+#define COMPONENT_DESCRIPTION "SonaDesk audio processing module"
+#else
+#define COMPONENT_FILE "MicEffects.Vst3.dll"
+#define COMPONENT_DESCRIPTION "SonaDesk VST3 host"
+#endif
+
+1 VERSIONINFO
+FILEVERSION SONADESK_VERSION
+PRODUCTVERSION SONADESK_VERSION
+FILEOS 0x00040004
+FILETYPE 0x00000002
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "FileDescription", COMPONENT_DESCRIPTION
+            VALUE "FileVersion", STRINGIFY(SONADESK_VERSION_TEXT)
+            VALUE "OriginalFilename", COMPONENT_FILE
+            VALUE "ProductName", "SonaDesk"
+            VALUE "ProductVersion", STRINGIFY(SONADESK_VERSION_TEXT)
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0409, 1200
+    END
+END

@@ -10,6 +10,8 @@
 
 Скрипт создаёт папку `SonaDesk` с `SonaDesk.exe` и подпапкой `app`. Для выпуска архива используйте `.\Source\Build-Portable.ps1`. Оба скрипта принимают `-OutputDirectory`, `-Zig` и `-SdkHeaders`.
 
+Workflow `Build Windows` запускается вручную во вкладке Actions. Он собирает текущие исходники на Windows и сохраняет `SonaDesk.zip` в артефакте `sonadesk-windows-unsigned` на три дня. Этот артефакт предназначен для дальнейшей подписи и проверки запуска.
+
 ## Релизы
 
 Версия указана в `Source/Desktop/package.json`, `Source/Desktop/package-lock.json` и `Source/MicEffects.csproj`. Прикрепите `SonaDesk.zip` к стабильному GitHub Release с тегом `vX.Y.Z`, совпадающим с версией приложения.

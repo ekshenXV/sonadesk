@@ -45,8 +45,19 @@ $Zig = (Resolve-Path -LiteralPath $Zig).Path
 $SdkHeaders = (Resolve-Path -LiteralPath $SdkHeaders).Path
 $env:ZIG_GLOBAL_CACHE_DIR = Join-Path $cache 'zig-global'
 $env:ZIG_LOCAL_CACHE_DIR = Join-Path $cache 'zig-local'
+$version = [version](Get-Content -LiteralPath (Join-Path $PSScriptRoot 'Desktop\package.json') -Raw | ConvertFrom-Json).version
+$fileVersion = @($version.Major, $version.Minor, $version.Build, 0) -join ','
+$apoResource = Join-Path $native 'apo.res'
+$vst3Resource = Join-Path $native 'vst3.res'
+$component = 1
+foreach ($resource in @($apoResource, $vst3Resource)) {
+    & $Zig rc /c65001 "/dSONADESK_VERSION=$fileVersion" "/dSONADESK_VERSION_TEXT=$version" `
+        "/dSONADESK_COMPONENT=$component" "/fo$resource" (Join-Path $PSScriptRoot 'NativeVersion.rc')
+    if ($LASTEXITCODE -ne 0) { throw 'Native version resource compilation failed.' }
+    $component++
+}
 $dll = Join-Path $native 'MicEffects.Apo.dll'
-& $Zig c++ -target x86_64-windows-gnu -std=c++17 -fms-extensions -shared -fno-exceptions -fno-rtti -O2 -g0 -s -DUNICODE -D_UNICODE -I $SdkHeaders (Join-Path $PSScriptRoot 'Apo\MicApo.cpp') (Join-Path $PSScriptRoot 'Apo\MicApo.def') -lole32 -ladvapi32 -o $dll
+& $Zig c++ -target x86_64-windows-gnu -std=c++17 -fms-extensions -shared -fno-exceptions -fno-rtti -O2 -g0 -s -DUNICODE -D_UNICODE -I $SdkHeaders (Join-Path $PSScriptRoot 'Apo\MicApo.cpp') (Join-Path $PSScriptRoot 'Apo\MicApo.def') $apoResource -lole32 -ladvapi32 -o $dll
 if ($LASTEXITCODE -ne 0) { throw 'APO build failed.' }
 
 $vst3Sdk = Join-Path $cache 'vst3-sdk'
@@ -63,7 +74,7 @@ if (!(Test-Path -LiteralPath (Join-Path $interfaces 'vst\ivstaudioprocessor.h'))
 }
 $vst3Host = Join-Path $native 'MicEffects.Vst3.dll'
 & $Zig c++ -target x86_64-windows-gnu -std=c++17 -shared -fno-rtti -O2 -g0 -s -I $vst3Sdk `
-    (Join-Path $PSScriptRoot 'Vst3\Host.cpp') -luser32 -o $vst3Host
+    (Join-Path $PSScriptRoot 'Vst3\Host.cpp') $vst3Resource -luser32 -o $vst3Host
 if ($LASTEXITCODE -ne 0) { throw 'VST3 host build failed.' }
 
 dotnet build (Join-Path $PSScriptRoot 'MicEffects.csproj') -c Release "-p:ApoBinary=$dll"

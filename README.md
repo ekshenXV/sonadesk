@@ -8,6 +8,8 @@ Real-time microphone and speaker control for Windows.
 
 Windows 10/11 x64 · .NET Framework 4.8
 
+This build is unsigned. Windows 11 Smart App Control can block it from starting. [Microsoft's explanation](https://support.microsoft.com/en-us/windows/security/threat-malware-protection/smart-app-control-frequently-asked-questions)
+
 ![SonaDesk main window with audio devices, the equalizer, and a VST effect chain](docs/images/sonadesk-en.png)
 
 ## Features

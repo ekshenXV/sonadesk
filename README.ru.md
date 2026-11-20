@@ -8,6 +8,8 @@
 
 Windows 10/11 x64 · .NET Framework 4.8
 
+Эта сборка без цифровой подписи. «Интеллектуальное управление приложениями» в Windows 11 может блокировать её запуск. [Пояснение Microsoft](https://support.microsoft.com/ru-ru/windows/security/threat-malware-protection/smart-app-control-frequently-asked-questions)
+
 ![Главное окно SonaDesk с настройками устройств, эквалайзером и цепочкой VST](docs/images/sonadesk-ru.png)
 
 ## Возможности

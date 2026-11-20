@@ -25,3 +25,9 @@ Windows 10/11 x64 · .NET Framework 4.8
 2. Запустите `SonaDesk.exe` и выберите свои устройства.
 
 При первом подключении системных эффектов Windows может запросить права администратора и ненадолго прервать звук.
+
+## Лицензия
+
+[MIT](LICENSE) · Copyright (c) 2026 [ekshenXV](https://github.com/ekshenXV). Сторонние компоненты сохраняют свои лицензии.
+
+[Code signing policy](docs/development.md#code-signing-policy)

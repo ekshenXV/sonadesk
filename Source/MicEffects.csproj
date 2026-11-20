@@ -8,6 +8,8 @@
     <Version>0.7.2</Version>
     <AssemblyName>SonaDesk.Audio</AssemblyName>
     <Product>SonaDesk</Product>
+    <Copyright>Copyright (c) 2026 ekshenXV</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <NAudioVersion>2.2.1</NAudioVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <ApoBinary Condition="'$(ApoBinary)' == ''">$(MSBuildProjectDirectory)/obj/native/MicEffects.Apo.dll</ApoBinary>

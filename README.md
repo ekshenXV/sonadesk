@@ -25,3 +25,9 @@ This build is unsigned. Windows 11 Smart App Control can block it from starting.
 2. Run `SonaDesk.exe` and select your devices.
 
 Windows may request administrator access and briefly restart audio when connecting system effects for the first time.
+
+## License
+
+[MIT](LICENSE) · Copyright (c) 2026 [ekshenXV](https://github.com/ekshenXV). Third-party components retain their own licenses.
+
+[Code signing policy](docs/development.md#code-signing-policy)

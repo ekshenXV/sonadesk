@@ -30,3 +30,17 @@ Workflow `Build Windows` запускается вручную во вкладк
 - Обмен звуком между процессами добавляет около 35 мс буферизации плюс задержку эффекта. Изоляция голоса сводит стереовход в моно и добавляет 60 мс при 48 кГц.
 
 Лицензии Electron, React, [NAudio](third-party/NAudio-LICENSE.txt) и интерфейсов VST3 приложены к программе. Изоляция голоса использует [DPDFNet](https://github.com/ceva-ip/DPDFNet) и [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) с [ONNX Runtime](https://github.com/microsoft/onnxruntime). Их файлы и лицензии находятся в `app/resources/voice-isolation`.
+
+## Code signing policy
+
+SonaDesk is preparing to apply to [SignPath Foundation](https://signpath.org/apply) for free signing. The project has not been accepted, no signing account is connected, and release 0.7.2 remains unsigned. The [MIT license](../LICENSE) covers SonaDesk's own code. Dependencies retain their original licenses.
+
+The intended signing provider, subject to acceptance, is SignPath.io, with a certificate held by SignPath Foundation. This would make SignPath Foundation the publisher displayed by Windows; copyright in SonaDesk remains with ekshenXV.
+
+- Author, reviewer, and release approver: [ekshenXV](https://github.com/ekshenXV).
+- Signing requests must originate from a verifiable GitHub-hosted build of this repository and require the maintainer's manual approval.
+- Multi-factor authentication is required for the maintainer's GitHub and SignPath accounts. Its configuration still needs to be confirmed during enrollment.
+- Signing coverage must be agreed with SignPath before integration. Upstream Electron and voice-isolation binaries cannot simply be signed as SonaDesk's own code under the Foundation's [terms](https://signpath.org/terms). A signature on the launcher alone does not establish compatibility with Smart App Control for all loaded components.
+- Enrollment also requires reviewing system-change notices and complete removal instructions for the installed APO. The application currently installs a system module in addition to its portable folder.
+
+Privacy: audio, voice-isolation recordings, plugin settings, and presets are processed locally. The app checks GitHub for release information at startup and downloads an update when the user requests it. These requests expose normal connection information, including an IP address, to GitHub; they do not upload audio or presets. User-added VST plugins run third-party code and may have their own network behavior. SonaDesk does not include analytics or an audio-upload service.

@@ -2,7 +2,7 @@ const { cpSync, copyFileSync, mkdirSync, readdirSync, writeFileSync } = require(
 const path = require('node:path');
 const [stage, output, native] = process.argv.slice(2).map(value => path.resolve(value));
 const options = require(path.join(stage, 'node_modules', 'esbuild'));
-const version = require(path.join(__dirname, 'package.json')).version;
+const { version, license } = require(path.join(__dirname, 'package.json'));
 
 async function main() {
   const runtime = path.join(stage, 'node_modules', 'electron', 'dist');
@@ -29,7 +29,8 @@ async function main() {
   cpSync(path.join(__dirname, 'fonts'), path.join(ui, 'fonts'), { recursive: true });
   for (const pkg of ['react', 'react-dom', 'scheduler'])
     copyFileSync(path.join(stage, 'node_modules', pkg, 'LICENSE'), path.join(resources, pkg + '-LICENSE.txt'));
-  writeFileSync(path.join(app, 'package.json'), JSON.stringify({ name: 'sonadesk', productName: 'SonaDesk', version, main: 'main.cjs' }));
+  copyFileSync(path.join(__dirname, '..', '..', 'LICENSE'), path.join(resources, 'SonaDesk-LICENSE.txt'));
+  writeFileSync(path.join(app, 'package.json'), JSON.stringify({ name: 'sonadesk', productName: 'SonaDesk', version, license, main: 'main.cjs' }));
   await options.build({
     entryPoints: [path.join(__dirname, 'app.jsx')],
     outfile: path.join(ui, 'app.js'),

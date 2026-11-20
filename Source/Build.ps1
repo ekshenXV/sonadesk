@@ -2,7 +2,8 @@
 param(
     [string]$Zig,
     [string]$SdkHeaders,
-    [string]$OutputDirectory = (Split-Path $PSScriptRoot -Parent)
+    [string]$OutputDirectory = (Split-Path $PSScriptRoot -Parent),
+    [string]$SigningScript
 )
 
 $ErrorActionPreference = 'Stop'
@@ -11,6 +12,8 @@ $native = Join-Path $PSScriptRoot 'obj\native'
 New-Item -ItemType Directory -Path $cache, $native -Force | Out-Null
 
 . (Join-Path $PSScriptRoot 'Build-Downloads.ps1')
+. (Join-Path $PSScriptRoot 'Build-Signing.ps1')
+if ($SigningScript) { $SigningScript = (Resolve-Path -LiteralPath $SigningScript).Path }
 
 if (!$Zig) {
     $Zig = Join-Path $cache 'zig-x86_64-windows-0.15.2\zig.exe'
@@ -76,6 +79,9 @@ $vst3Host = Join-Path $native 'MicEffects.Vst3.dll'
 & $Zig c++ -target x86_64-windows-gnu -std=c++17 -shared -fno-rtti -O2 -g0 -s -I $vst3Sdk `
     (Join-Path $PSScriptRoot 'Vst3\Host.cpp') $vst3Resource -luser32 -o $vst3Host
 if ($LASTEXITCODE -ne 0) { throw 'VST3 host build failed.' }
+
+# The APO must be signed before the managed host embeds it.
+Invoke-BuildSigning $SigningScript @($dll, $vst3Host)
 
 dotnet build (Join-Path $PSScriptRoot 'MicEffects.csproj') -c Release "-p:ApoBinary=$dll"
 if ($LASTEXITCODE -ne 0) { throw 'Application build failed.' }

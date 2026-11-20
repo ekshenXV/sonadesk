@@ -2,11 +2,14 @@
 param(
     [string]$Zig,
     [string]$SdkHeaders,
-    [string]$OutputDirectory = (Join-Path (Split-Path $PSScriptRoot -Parent) 'SonaDesk')
+    [string]$OutputDirectory = (Join-Path (Split-Path $PSScriptRoot -Parent) 'SonaDesk'),
+    [string]$SigningScript
 )
 
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'Build-Downloads.ps1')
+. (Join-Path $PSScriptRoot 'Build-Signing.ps1')
+if ($SigningScript) { $SigningScript = (Resolve-Path -LiteralPath $SigningScript).Path }
 $desktop = Join-Path $PSScriptRoot 'Desktop'
 $stage = Join-Path $PSScriptRoot 'obj\desktop'
 $native = Join-Path $stage 'native'
@@ -26,7 +29,7 @@ $electronZip = Join-Path $stage $electronArchive
 Get-BuildArchive "https://github.com/electron/electron/releases/download/v$electronVersion/$electronArchive" $electronZip $electronHash
 Expand-BuildZip $electronZip (Join-Path $electron 'dist')
 
-& (Join-Path $PSScriptRoot 'Build.ps1') -Zig $Zig -SdkHeaders $SdkHeaders -OutputDirectory $native
+& (Join-Path $PSScriptRoot 'Build.ps1') -Zig $Zig -SdkHeaders $SdkHeaders -SigningScript $SigningScript -OutputDirectory $native
 $runtime = Join-Path $OutputDirectory 'app'
 & node (Join-Path $desktop 'package-app.cjs') $stage $runtime $native
 if ($LASTEXITCODE -ne 0) { throw 'Desktop build failed.' }
@@ -47,4 +50,9 @@ $builtLauncher = Join-Path $native 'SonaDesk.exe'
 & $Zig cc -target x86_64-windows-gnu -municode '-Wl,--subsystem,windows' -Oz -s (Join-Path $desktop 'launcher.c') $resource -luser32 -o $builtLauncher
 if ($LASTEXITCODE -ne 0) { throw 'Launcher build failed.' }
 Copy-Item -LiteralPath $builtLauncher -Destination $launcher -Force
+if ($SigningScript) {
+    $files = @(Get-ChildItem -LiteralPath $OutputDirectory -Recurse -File |
+        Where-Object Extension -in '.exe', '.dll' | Select-Object -ExpandProperty FullName)
+    Invoke-BuildSigning $SigningScript $files
+}
 Write-Output $launcher

@@ -2,10 +2,12 @@
 param(
     [string]$Zig,
     [string]$SdkHeaders,
-    [string]$OutputDirectory = (Split-Path $PSScriptRoot -Parent)
+    [string]$OutputDirectory = (Split-Path $PSScriptRoot -Parent),
+    [string]$SigningScript
 )
 
 $ErrorActionPreference = 'Stop'
+if ($SigningScript) { $SigningScript = (Resolve-Path -LiteralPath $SigningScript).Path }
 New-Item -ItemType Directory -Path $OutputDirectory -Force | Out-Null
 $output = Join-Path (Resolve-Path -LiteralPath $OutputDirectory).Path 'SonaDesk.zip'
 $pending = "$output.$([Guid]::NewGuid()).pending"
@@ -14,7 +16,7 @@ $stage = Join-Path $stageRoot ([Guid]::NewGuid().ToString('N'))
 $application = Join-Path $stage 'SonaDesk'
 New-Item -ItemType Directory -Path $application -Force | Out-Null
 try {
-    & (Join-Path $PSScriptRoot 'Build-Desktop.ps1') -Zig $Zig -SdkHeaders $SdkHeaders -OutputDirectory $application
+    & (Join-Path $PSScriptRoot 'Build-Desktop.ps1') -Zig $Zig -SdkHeaders $SdkHeaders -SigningScript $SigningScript -OutputDirectory $application
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     [IO.Compression.ZipFile]::CreateFromDirectory($application, $pending, [IO.Compression.CompressionLevel]::Optimal, $true)
     if (Test-Path -LiteralPath $output) {
